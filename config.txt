@@ -1,0 +1,69 @@
+bufferValue		=12345;		//test dla odczytu pierwszej wartosci (12345), dla przeczyszczenia buforu; UWAGA: ponizsze komentarze moga miec MAX 1000 znakow
+N			=1200;		//obslugiwane - warunek liniowej wielokrotnosci: sqrt(N/i)==floor(sqrt(N/i)) i=168(S1), i=196(S3,D1-2), i=48(S6,S7), i=108(S19), i=56(random i HD - one rowniez we wszystkich pozostalych N), i=300(D7-1,D10,D13,S61,S61-zigzag[dowolny]), i=588(D7-2,D8,D9,D19-1,D22-1,D25-1,D25-2,D31), i=1444(D7-3), i=7396(D19-2,D22-2,D25-3), i=2028(D19-3,D20,D21), i=5476(D19-4), i=192(S37), i=36(D1-1,D2), i=432(S91,S91-zigzag[dowolny]); przy strukturach re-entrant, coordination-zone/star-shaped i freeShape N zadane w tym miejscu nie ma znaczenia (okreslane jest niezaleznie przez zestaw parametrow re-entrant/coordination-zone/star-shaped/freeShape)
+gaps			=0;		//liczba luk w ukladzie (dziur-defektow), rozmieszczonych losowo przy inicie (nie zbyt blisko)
+initMode		=78;		//struktury: 0-HD,1-S1,2-S1i,3-S3,4-S3i,5-S6,6-S6i,7-random,(kolejne: nieparzyste indexy to struktury "i")8-S7,10-S19,12-D7-1,14-D7-2,16-D7-3,18-D10(D7-1[x3]),20-D13(D7-1[x6]),22-D8(D7-2[x3]),24-D9(D7-2[x6]),26-D19-1,28-D19-2,30-D19-3,32-D19-4,34-D22-1(D19-1[x3]),36-D25-1(D19-1[x6]),38-D25-2(D19-1[x3]),40-D31(D19-1[x6]),42-D22-2(D19-2[x3]),44-D25-3(D19-2[x6]),46-D20(D19-3[x3]),48-D21(D19-3[x6]),50-S37,52-S61,54-D1-1,56-D1-2,58-D2(D1-1[x3]),60-re-entrant structure,62-S61-zigzag[+1],64-S61-zigzag[+2],66-S91,68-S91-zigzag[+1],70-S91-zigzag[+2],72-S61-zigzag[+3],74-coordination-zone structure,76-star-shaped structure,78-freeShape
+deltaDiameter		=1.000E-03;	//diameter=\sigma(=1)\pm deltaDiameter [.3]; przy (initMode=7 && beta>0): odchylenie standardowe \delta rozkladu Gaussa [wartosc srednia \my=sigma(=1)]
+alpha			=1;		//0-d_b=sigma+delta, d_w=sigma-delta; 1-d_b=sigma, d_w=sigma-delta; ma znaczenie gdy !(initMode=7 && beta>0)
+beta			=10;		//ma wplyw przy: (1)initMode=7: 0-losowy rozklad dyskow black/white w stosunku 50% (uklad binarny), 1-srednice dyskow zadane rozkladem Gaussa o wartosci sredniej \my=\sigma(=1) i odchyleniu standardowym \delta=deltaDiameter, 2-rozklad cosinusowy; (2)initMode=60/61/74/75/76/77: modyfikator "pogrubiajacy" szkielet re-entrant/coordination-zone/star-shaped - 0-brak pogrubienia (szkielet o grubosci 1 dysku[re-entrant]/3 stref sasiadow[coordination-zone]/1 dysku[star-shaped]), >0-pogrubienie szkieletu o 'beta' dyskow[re-entrant]/stref sasiadow[coordination-zone]/dyskow[star-shaped]; (3)initMode=78/79: zadany ksztalt tworzony jest przez dyski, ktorych srodki znajduja sie w odleglosci DO 0.1*beta*sigma(=1)*sqrt(startPacFrac) od odcinkow laczacych punkty okreslone w parM&parN (zatem, przy zalozeniu CP[pacFrac=1] i d=sigma: beta=0-dyski lezace NA odcinku, beta=5-dyski 'przecinane/styczne' przez/do odcinek/ka, beta>=6-dyski lezace dalej od odcinka)
+parM			=4.000000,0.000000:8.500000,7.794229:4.000000,3.464102:-0.500000,7.794229:4.000000,0.000000;		//ma wplyw przy: initMode=60/61: >=1 - okresla szerokosc (liczbe dyskow) w polowie wysokosci szkieletu re-entrant; initMode=74/75: >=0 - okresla ile stref sasiadow wokol 'seeda' ma byc wewnatrz 'gwiazdy'; initMode=76/77: >=1 - okresla dlugosc boku gwiazdy; initMode=78/79: okresla wspolrzedne punktow (w jednostkach sigma i przy zalozeniu CP[pacFrac=1] - dla wiekszych pacFrac zostana one automatycznie przeskalowane), ktore po polaczeniu odcinkami tworza zadany ksztalt (patrz: beta) - format: x1,y1:x2,y2:x3,y3:x4,y4...(max 20 punktow), np. =3.000000,0.000000:6.000000,5.196152;
+parN			=9,3.464101615:5,5;		//ma wplyw przy: initMode=60/61: >=parM+3 - okresla szerokosc (liczbe dyskow) podstaw szkieletu re-entrant; initMode=74/75: >=1, 76/77: >=3*parM+2 - okresla odleglosc (w jedn. \sigma) 'seedow' (srodkow 'gwiazd'); initMode=78/79: intervX,intervY:scaleX,scaleY - interwaly (w jednostkach sigma i przy zalozeniu CP[pacFrac=1], tj. tak samo jak punkty w parM) okreslaja rozmiar komorki elementarnej (rowniez: o tyle w poziomie/pionie bedzie przesuwany ksztalt zadany przez parM przy parX/YCells>1), a skale daja mozliwosc skalowania w X/Y (skalowane sa zarowno punkty w parM jak i interwaly w parN), np. =6,3.464101615:1,1;
+parXCells		=1;		//ma wplyw przy: initMode=60/61/74-79: okresla liczbe periodycznych komorek elementarnych w kierunku X (wielokrotnosc horyzontalna), tworzacych pudlo symulacyjne (superkomorke)
+parYCells		=2;		//ma wplyw przy: initMode=60/61/74-79: okresla liczbe periodycznych komorek elementarnych w kierunku Y (wielokrotnosc wertykalna), tworzacych pudlo symulacyjne (superkomorke)
+pressureOfNotFluid	=0.6;		//cisnienie/pacFrac, ponizej/powyzej ktorego ksztalt pudla nie fluktuuje (ok. p=1.24 dla d/\sigma=1 i multimerN=6) - ponizej/powyzej niego nie mozna wyznaczyc modulow sprezystosci (p/pacFrac - TWARDO w kodzie)
+growing			=1;		//0-rozprezanie, 1-sprezanie
+loadedConfiguration	=0;		//0-nowe badanie, 1-wczytaj konfiguracje
+loadedArg		=0.000;	//gdy loadedConfiguration=1, wskaze na plik konfiguracyjny, ktory zostanie wczytany
+loadedJOBID		=none;		//gdy loadedConfiguration=1, wskaze JOBID pliku konfiguracji, okreslonej przez loadedArg
+loadedSetStartGenerator	=0;		//0-ustaw pozycje startowa generatora na aktualny czas procesora, 1-ustaw pozycje startowa generatora na wskazanie pliku LOAD
+loadedSetGenerator	=0;		//0-nie ustawiaj generatora na pozycje wskazywana przez plik LOAD, 1-ustaw generator na pozycje wskazywana przez plik LOAD
+iterationsNumber	=0;		//0-wiecej iteracji, x(>0)-x iteracji (UWAGA: skipFirstIteration=1 pomija pierwsza)
+intervalSampling	=5;		//liczba cykli, co ktora sprawdzane sa akceptacje (w trakcie rownowagowania -> sa dostosowywane, po rownowagowaniu -> dzialaja metody zapisujace wyniki)
+intervalOutput		=10000;	//liczba cykli, co ktora wypisywany jest aktualny stan ukladu oraz robiony checkpoint jego konfiguracji - wielokrotnosc intervalSampling
+saveConfigurations	=0;		//0-nie zapisuj.., 1-zapisuj konfiguracje przejsciowe i przeprowadzaj TransientAnalysis (aktualnie: uzyskiwanie wartosci avAbsDPhi)
+savedConfigurationsInt	=1000;		//gdy saveConfigurations==1: liczba cykli, co ktora zapisywane sa konfiguracje przejsciowe - wielokrotnosc intervalSampling
+neighUpdatingFrequency	=10;		//liczba cykli, co ktora updatowana jest lista sasiadow - wielokrotnosc intervalSampling
+skipFirstIteration	=0;		//0-zacznij badanie od pierwszego punktu pomiarowego, 1-zacznij badanie od drugiego punktu pomiarowego
+useSpecificDirectory	=0;		//0-stworz nowy folder (kolejny), x(>0)-uzyj (stworz) folder o numerze x
+cyclesOfEquilibration	=0;	//cykle na rozruch
+cyclesOfMeasurement	=500000;	//cykle na pomiar (po rozruchu)
+intervalResults		=1000;		//liczba cykli, co ktora zapisywane sa mierzone wielkosci - wielokrotnosc intervalSampling
+maxDeltaR		=0.15;		//najwieksza wartosc ruchu probnego czastki (w jednostkach sigma)
+desiredAcceptanceRatioR	=0.3;		//wartosc akceptacji ruchow probnych czastek
+desiredAcceptanceRatioV	=0.2;		//wartosc akceptacji ruchow probnych pudla
+useFileToIterate	=0;		//0-stosuj PONIZSZE ustawienia, 1-korzystaj z pliku 'startArguments.txt' do iterowania (plik ustawiony DOMYSLNIE na growing=1, max 1000 iteracji; UWAGA-kolumny: pierwsza:pacFrac[dowolna], druga:pressure[%.4E], trzecia:BRAK lub 1 (punkt bedzie tylko rownowagowany BEZ etapu pomiarowego)
+startMinPacFrac		=1.00000001;	//wartosc pacFrac, (startowe V przy growing=1)
+startMaxPacFrac		=1.000;	//wartosc pacFrac, (startowe V przy growing=0)
+minArg			=1000.000;	//najmniejsze badane cisnienie (startArg przy growing=1)
+maxArg			=0.000;	//najwieksze badane cisnienie (startArg przy growing=0)
+multiplyArgument	=1;		//0-argument dodawany (interwaly), 1-argument mnozony (czynnik ponizej)
+multiplyFactor		=100;	//gdy multiplyArgument=1, factor zwiekszania argumentu (>1) 1.01010101010101
+intervalMin[0]		=0.0000;	//skoki iteracji dla przedzialow cisnienia (poczatkowy i koncowy musza wykraczac poza minArg i maxArg)
+intervalMax[0]		=10.0000;
+intervalDelta[0]	=0.2600;
+intervalMin[1]		=10.0000;
+intervalMax[1]		=30.0000;
+intervalDelta[1]	=5.0000;
+intervalMin[2]		=30.0000;
+intervalMax[2]		=90.0000;
+intervalDelta[2]	=15.0000;
+intervalMin[3]		=90.00000;
+intervalMax[3]		=500.0000;
+intervalDelta[3]	=50.0000;
+intervalMin[4]		=0.0000;
+intervalMax[4]		=0.0000;
+intervalDelta[4]	=0.0000;
+intervalMin[5]		=0.0000;
+intervalMax[5]		=0.0000;
+intervalDelta[5]	=0.0000;
+intervalMin[6]		=0.0000;
+intervalMax[6]		=0.0000;
+intervalDelta[6]	=0.0000;
+intervalMin[7]		=0.0000;
+intervalMax[7]		=0.0000;
+intervalDelta[7]	=0.0000;
+intervalMin[8]		=0.0000;
+intervalMax[8]		=0.0000;
+intervalDelta[8]	=0.0000;
+intervalMin[9]		=0.0000;
+intervalMax[9]		=0.0000;
+intervalDelta[9]	=0.0000;
